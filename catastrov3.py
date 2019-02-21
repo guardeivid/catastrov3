@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- CatastroV2
+ CatastroV3
                                  A QGIS plugin
  Search catastro
                               -------------------
-        begin                : 2018-07-30
+        begin                : 2019-02-15
         git sha              : $Format:%H$
-        copyright            : (C) 2018 by David Orellano
+        copyright            : (C) 2019 by David Orellano
         email                : guardeivid@yahoo.com.ar
  ***************************************************************************/
 

@@ -22,7 +22,7 @@ class Utils(object):
         return pickle.load(open(self.file, 'rb'))
 
     def set_config(self, config):
-        pickle.dump(config, open(os.path.join(os.path.dirname(__file__), 'settings.db'), 'wb'), 2)
+        pickle.dump(config, open(self.file, 'wb'), 2)
 
     def getPartidos(self):
         return self.cfg.get('partidos', [])
@@ -100,7 +100,8 @@ class Utils(object):
 
     def removeLayer(self, baseName, pdo, pda=None, cir=None, sec=None, chn=None, chl=None, qtn=None, qtl=None, frn=None, frl=None, mzn=None, mzl=None, pcn=None, pcl=None):
         layers = QgsProject.instance().mapLayersByName(baseName)
-        QgsProject.instance().removeMapLayers(layers)
+        for lyr in layers:
+            QgsProject.instance().removeMapLayer(lyr.id())
 
         pdo.setCurrentIndex(0)
         if pda != None:

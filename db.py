@@ -5,8 +5,6 @@ from builtins import object
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 from qgis.utils import iface
 
-#config = {'host': '', 'dbname': '', 'port': 5432, 'user': '', 'pswd': '', 'schema': '', layers: []}
-
 class Db(object):
 
     def __init__(self, iface, utils):

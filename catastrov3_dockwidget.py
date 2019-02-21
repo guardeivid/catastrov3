@@ -5,7 +5,7 @@
                                  A QGIS plugin
  Search catastro
                              -------------------
-        begin                : 2018-07-30
+        begin                : 2019-02-18
         git sha              : $Format:%H$
         copyright            : (C) 2018 by David Orellano
         email                : guardeivid@yahoo.com.ar

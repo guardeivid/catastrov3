@@ -2,15 +2,15 @@
 [general]
 name=CatastroV3
 qgisMinimumVersion=3.0
-description=Search catastro
-version=3.0
+description=Busqueda Catastral
+version=1.0
 author=David Orellano
 email=guardeivid@yahoo.com.ar
 
-about=Provide a brief description of the plugin and its purpose.
+about=Busqueda catastral, por partida inmobiliaria o nomenclatura catastral de la Provincia de Buenos Aires. A través de método local (configurando parámetros de conexión a base de datos PostGis) o a servicios de mapas web de la Agencia de Recaudación de la Provincia de Buenos Aires (ARBA)
 
-tracker=http://bugs
-repository=http://repo
+tracker=https://github.com/guardeivid/catastrov3/issues
+repository=https://github.com/guardeivid/catastrov3
 # End of mandatory metadata
 
 # Recommended items:
@@ -19,9 +19,9 @@ repository=http://repo
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=python
+tags=busqueda catastral partida inmobiliaria nomenclatura arba wfs database
 
-homepage=http://homepage
+homepage=https://github.com/guardeivid/catastrov3
 category=Database
 icon=icon.png
 # experimental flag
