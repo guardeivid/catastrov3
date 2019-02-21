@@ -32,7 +32,7 @@ class Utils(object):
             for i in range(0, len(partidos)):
                 combobox.addItem(partidos[i][0], partidos[i][1])
         else:
-            self.iface.messageBar().pushWarning(u'Advertencia', u'No se encontraron registros')
+            self.iface.messageBar().pushWarning('Advertencia', 'No se encontraron registros')
 
     def createFields(self, layer):
         fields = [

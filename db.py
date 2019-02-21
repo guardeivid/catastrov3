@@ -50,26 +50,6 @@ class Db(object):
         else:
             return None
 
-    def getPartidos(self):
-        if len(self.partidos) > 0:
-            return self.partidos
-
-        if self.connect():
-            sql = 'SELECT partido::int, nombre FROM {}.partidos ORDER BY partido'.format(self.schema)
-            if self.query.exec_(sql):
-                row = self.query.record()
-                while self.query.next():
-                    id = self.query.value(int(row.indexOf("partido")))
-                    nombre = self.query.value(row.indexOf("nombre"))
-                    aDatos = [str(id) + '- ' + nombre, str(id)]
-                    self.partidos.append(aDatos)
-
-                return self.partidos
-            else:
-                return None
-        else:
-            iface.messageBar().pushCritical(u'Error', u'No se pudo conectar a la base de datos')
-
     def get_layer(self, idx):
         return self.layers[idx]
 
@@ -82,7 +62,7 @@ class Db(object):
             sql = "SELECT cca, {} as pda, ST_Astext(geom) FROM {}.{} WHERE cca = ?".format(pda, self.schema, layer)
             return self.execute(sql, nomencla, layer)
         else:
-            self.iface.messageBar().pushCritical(u'Error', u'No se pudo conectar a la base de datos')
+            self.iface.messageBar().pushCritical('Error', 'No se pudo conectar a la base de datos')
 
     def get_by_partida(self, pdopda):
         if pdopda == '0'*9:
@@ -93,7 +73,7 @@ class Db(object):
             sql = "SELECT cca, pda, ST_Astext(geom) FROM {}.{} WHERE pda = ?".format(self.schema, layer)
             return self.execute(sql, pdopda, layer)
         else:
-            self.iface.messageBar().pushCritical(u'Error', u'No se pudo conectar a la base de datos')
+            self.iface.messageBar().pushCritical('Error', 'No se pudo conectar a la base de datos')
 
     def proccess(self, layer):
         result = []
