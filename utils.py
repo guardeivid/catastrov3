@@ -19,10 +19,15 @@ class Utils(object):
         self.cfg = self.get_config()
 
     def get_config(self):
-        return pickle.load(open(self.file, 'rb'))
+        file = open(self.file, 'rb')
+        cfg = pickle.load(file)
+        file.close()
+        return cfg
 
     def set_config(self, config):
-        pickle.dump(config, open(self.file, 'wb'), 2)
+        file = open(self.file, 'wb')
+        pickle.dump(config, file, 2)
+        file.close()
 
     def getPartidos(self):
         return self.cfg.get('partidos', [])

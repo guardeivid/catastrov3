@@ -13,8 +13,11 @@ class Web(object):
         self.utils = utils
 
     def send_request(self, url):
-        req = urllib.request.urlopen(url).read()
-        return json.loads(req.decode('utf-8'))
+        try:
+            req = urllib.request.urlopen(url).read()
+            return json.loads(req.decode('utf-8'))
+        except Exception as e:
+            self.iface.messageBar().pushCritical('Error', 'Servicio WFS no disponible')
 
     def get_request(self, cql_filter='', layer='Parcela'):
         url = "http://geo.arba.gov.ar/geoserver/idera/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=idera:{}&maxFeatures=50&outputFormat=application%2Fjson&CQL_filter={}".format(layer, cql_filter)
@@ -52,7 +55,7 @@ class Web(object):
 
                 properties = feature['properties']
 
-                (layer, id) = feature['id'].split('.')
+                (layer, __) = feature['id'].split('.')
                 cca = properties['cca']
                 partido = int(cca[:3])
 

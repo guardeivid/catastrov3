@@ -80,6 +80,8 @@ class CatastroV3DockWidget(QDockWidget, FORM_CLASS):
         self.nomencla = ""
         self.result2 = None
 
+        self.initSetting()
+
         #eventos
         self.search1.clicked.connect(self.getPartida)
         self.clean1.clicked.connect(lambda: self.utils.removeLayer(self.baseName[0], self.pdo1, self.pda))
@@ -88,6 +90,7 @@ class CatastroV3DockWidget(QDockWidget, FORM_CLASS):
         self.clean2.clicked.connect(lambda: self.utils.removeLayer(self.baseName[1], self.pdo2, self.cir, self.sec, self.chn, self.chl, self.qtn, self.qtl, self.frn, self.frl, self.mzn, self.mzl, self.pcn, self.pcl))
 
         self.rbNew.toggled.connect(self.toggleButton)
+        self.settingOk.clicked.connect(self.setSettings)
 
     def closeEvent(self, event):
         self.closingPlugin.emit()
@@ -152,11 +155,14 @@ class CatastroV3DockWidget(QDockWidget, FORM_CLASS):
                 if ok is True:
                     return
 
-        if self.result1 != None and len(self.result1) > 0:
-            layer = self.utils.addLayerToMap(self.rbDefault, self._layer1, self.baseName[0], self.path, self.provider, self.estilo_defecto, self.qml[0])
-            self.utils.addResultToLayer(layer["layer"], self.result1, layer["lyrDefault"], self.mode)
+        if isinstance(self.result1, list):
+            if len(self.result1) > 0:
+                layer = self.utils.addLayerToMap(self.rbDefault, self._layer1, self.baseName[0], self.path, self.provider, self.estilo_defecto, self.qml[0])
+                self.utils.addResultToLayer(layer["layer"], self.result1, layer["lyrDefault"], self.mode)
+            else:
+                self.iface.messageBar().pushInfo(u'Resultado', u'No se encontró la Partida Inmobiliaria')
         else:
-            self.iface.messageBar().pushInfo(u'Resultado', u'No se encontró la Partida Inmobiliaria')
+            self.pdopda = ''
 
     def getNomencla(self):
         if self.pdo2.currentIndex() == -1:
@@ -224,8 +230,68 @@ class CatastroV3DockWidget(QDockWidget, FORM_CLASS):
                 if ok is True:
                     return
 
-        if self.result2 != None and len(self.result2) > 0:
-            layer = self.utils.addLayerToMap(self.rbDefault, self._layer2, self.baseName[1], self.path, self.provider, self.estilo_defecto, self.qml[1])
-            self.utils.addResultToLayer(layer["layer"], self.result2, layer["lyrDefault"], self.mode)
+        if isinstance(self.result2, list):
+            if len(self.result2) > 0:
+                layer = self.utils.addLayerToMap(self.rbDefault, self._layer2, self.baseName[1], self.path, self.provider, self.estilo_defecto, self.qml[1])
+                self.utils.addResultToLayer(layer["layer"], self.result2, layer["lyrDefault"], self.mode)
+            else:
+                self.iface.messageBar().pushInfo(u'Resultado', u'No se encontró la Nomenclatura Catastral')
         else:
-            self.iface.messageBar().pushInfo(u'Resultado', u'No se encontró la Nomenclatura Catastral')
+            self.nomencla = ''
+
+    def initSetting(self):
+        if self.mode == 'web':
+            self.rbWeb.setChecked(True)
+        else:
+            self.rbDB.setChecked(True)
+
+        self.host.setText(self.utils.cfg.get('host', 'localhost'))
+        self.port.setText(str(self.utils.cfg.get('port', 5432)))
+        self.dbname.setText(self.utils.cfg.get('dbname', ''))
+        self.user.setText(self.utils.cfg.get('user', ''))
+        self.pswd.setText(self.utils.cfg.get('pswd', ''))
+
+        self.schema.setText(self.db.schema)
+        self.departamento.setText(self.db.layers[0])
+        self.circunscripcion.setText(self.db.layers[1])
+        self.seccion.setText(self.db.layers[2])
+        self.chacra.setText(self.db.layers[3])
+        self.quinta.setText(self.db.layers[4])
+        self.fraccion.setText(self.db.layers[5])
+        self.manzana.setText(self.db.layers[6])
+        self.parcela.setText(self.db.layers[7])
+
+    def setSettings(self):
+        mode = 'web'
+        if self.rbDB.isChecked():
+            mode = 'local'
+            cfg = self.utils.cfg
+            schema = self.schema.text()
+            layers = [
+                self.departamento.text(),
+                self.circunscripcion.text(),
+                self.seccion.text(),
+                self.chacra.text(),
+                self.quinta.text(),
+                self.fraccion.text(),
+                self.manzana.text(),
+                self.parcela.text(),
+                "subparcela"
+            ]
+
+            cfg['host'] = self.host.text()
+            cfg['port'] = int(self.port.text())
+            cfg['dbname'] = self.dbname.text()
+            cfg['user'] = self.user.text()
+            cfg['pswd'] = self.pswd.text()
+            cfg['schema'] = schema
+            cfg['layers'] = layers
+
+            self.db.set_schema(schema)
+            self.db.set_layers(layers)
+            self.db.get_db(cfg)
+            self.utils.set_config(cfg)
+            self.utils.cfg = cfg
+
+        self.setMode(mode)
+        self.iface.messageBar().pushInfo(u'Configuración', u'Cambiada la configuración')

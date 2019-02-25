@@ -8,9 +8,11 @@ from qgis.utils import iface
 class Db(object):
 
     def __init__(self, iface, utils):
+        self.iface = iface
         self.utils = utils
         self.layers = self.get_layers(utils.cfg)
         self.schema = self.get_schema(utils.cfg)
+        self.db = None
         self.get_db(utils.cfg)
 
     def get_schema(self, cfg):
@@ -27,6 +29,9 @@ class Db(object):
 
     def get_db(self, cfg):
         if QSqlDatabase.contains("midb"):
+            if self.db:
+                if self.db.isOpen():
+                    self.db.close()
             QSqlDatabase.removeDatabase("midb")
 
         self.db = QSqlDatabase.addDatabase("QPSQL", "midb")
@@ -40,14 +45,17 @@ class Db(object):
 
     def connect(self):
         ok = self.db.open()
-        return ok
+        return self.db.isValid()
+        #return ok
 
-    def execute(self, sql, value, layer):
+    def execute(self, sql, value, layer, idx):
         self.query.prepare(sql)
         self.query.addBindValue(value)
         if self.query.exec_():
-            return self.proccess(layer)
+            return self.proccess(layer, idx)
         else:
+            sqlError = self.query.lastError()
+            self.iface.messageBar().pushCritical('Error', sqlError.databaseText())
             return None
 
     def get_layer(self, idx):
@@ -56,11 +64,16 @@ class Db(object):
     def get_by_nomencla(self, nomencla, idx):
         if self.connect():
             pda = 'null::int'
+            pdo = 'null::varchar'
             if idx >= 7:
                 pda = 'pda::int'
+
+            if idx == 0:
+                pdo = 'nam'
+
             layer = self.get_layer(idx)
-            sql = "SELECT cca, {} as pda, ST_Astext(geom) FROM {}.{} WHERE cca = ?".format(pda, self.schema, layer)
-            return self.execute(sql, nomencla, layer)
+            sql = "SELECT cca, {} as pda, ST_Astext(geom), {} as nam FROM {}.{} WHERE cca = ?".format(pda, pdo, self.schema, layer)
+            return self.execute(sql, nomencla, layer, idx)
         else:
             self.iface.messageBar().pushCritical('Error', 'No se pudo conectar a la base de datos')
 
@@ -71,22 +84,28 @@ class Db(object):
         if self.connect():
             layer = self.get_layer(7)
             sql = "SELECT cca, pda, ST_Astext(geom) FROM {}.{} WHERE pda = ?".format(self.schema, layer)
-            return self.execute(sql, pdopda, layer)
+            return self.execute(sql, pdopda, layer, 7)
         else:
             self.iface.messageBar().pushCritical('Error', 'No se pudo conectar a la base de datos')
 
-    def proccess(self, layer):
+    def proccess(self, layer, idx):
         result = []
         while self.query.next():
             cca = self.query.value(0)
             partida = self.query.value(1)
             if partida:
                 partida = int(partida[3:])
+
+            if idx == 0:
+                nomenclatura = self.query.value(3)
+            else:
+                nomenclatura = self.utils.format_nomenclatura(cca)
+
             row = {
                 "id": "{}.{}".format(layer, cca),
                 "partido": int(cca[:3]),
                 "partida": partida,
-                "nomenclatura": self.utils.format_nomenclatura(cca),
+                "nomenclatura": nomenclatura,
                 "codigo": cca,
                 "wkt": self.query.value(2),
                 "layer": layer.capitalize()
