@@ -3,7 +3,7 @@
 name=CatastroV3
 qgisMinimumVersion=3.0
 description=Busqueda Catastral
-version=1.1
+version=1.2
 author=David Orellano
 email=guardeivid@yahoo.com.ar
 
@@ -20,7 +20,9 @@ repository=https://github.com/guardeivid/catastrov3
 # Recommended items:
 
 # Uncomment the following line and add your changelog:
-changelog=1.1
+changelog=1.2
+    Fix parse partida
+    1.1
     GUI for settings searchs
 
 # Tags are comma separated with spaces allowed
