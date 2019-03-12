@@ -94,7 +94,10 @@ class Db(object):
             cca = self.query.value(0)
             partida = self.query.value(1)
             if partida:
-                partida = int(partida[3:])
+                try:
+                    partida = int(partida[3:])
+                except ValueError:
+                    partida = None
 
             if idx == 0:
                 nomenclatura = self.query.value(3)

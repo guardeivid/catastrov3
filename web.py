@@ -66,7 +66,10 @@ class Web(object):
 
                 partida = properties.get('pda')
                 if partida:
-                    partida = int(partida[3:])
+                    try:
+                        partida = int(partida[3:])
+                    except ValueError:
+                        partida = None
 
                 feat = {
                     "id": feature['id'],
