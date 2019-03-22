@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import urllib.request
+# import urllib.request
 from builtins import object
 import json
 from qgis.core import QgsPointXY
+from .networkaccessmanager import NetworkAccessManager, RequestsException
 
 class Web(object):
-
+    USER_AGENT = b'Mozilla/5.0 QGIS'
     def __init__(self, iface, utils):
         super(Web, self).__init__()
         self.iface = iface
@@ -14,9 +15,12 @@ class Web(object):
 
     def send_request(self, url):
         try:
-            req = urllib.request.urlopen(url).read()
-            return json.loads(req.decode('utf-8'))
-        except Exception as e:
+            # req = urllib.request.urlopen(url).read()
+            nam = NetworkAccessManager()
+            headers = {b'User-Agent': self.USER_AGENT}
+            (response, content) = nam.request(url, headers=headers, blocking=True)
+            return json.loads(content.decode('utf-8'))
+        except RequestsException as err:
             self.iface.messageBar().pushCritical('Error', 'Servicio WFS no disponible')
 
     def get_request(self, cql_filter='', layer='Parcela'):
