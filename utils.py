@@ -156,7 +156,7 @@ class Utils(object):
                 bbox.combineExtentWith(feat.geometry().boundingBox())
 
             layer.updateExtents()
-            self.canvas.setExtent(bbox)
+            self.canvas.setExtent(self.setBboxMap(bbox, layer))
             layer.triggerRepaint()
             #canvas.refresh()
             return True
@@ -165,7 +165,7 @@ class Utils(object):
             print(str(e))
             return False
 
-    def changeLayerAdditionMode( self, layers ):
+    def changeLayerAdditionMode(self, layers):
         QgsProject.instance().layerTreeRegistryBridge().setLayerInsertionPoint( QgsProject.instance().layerTreeRoot(), 0 )
 
     def setBboxMap(self, bbox, layer):
@@ -173,11 +173,13 @@ class Utils(object):
         crs_canvas = self.canvas.mapSettings().destinationCrs()
         if crs_canvas.authid() != crs_layer.authid():
             try:
-                xform = QgsCoordinateTransform(crs_layer, crs_canvas) #agregsr contexto en v3
+                xform = QgsCoordinateTransform(crs_layer, crs_canvas, QgsProject.instance())
                 bbox = xform.transform(bbox)
             except Exception as e:
                 print(str(e))
         return bbox
+
+        QgsProject
 
     def format_nomenclatura(self, nomencla):
         n = len(nomencla)
