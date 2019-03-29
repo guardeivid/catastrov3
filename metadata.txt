@@ -3,13 +3,13 @@
 name=CatastroV3
 qgisMinimumVersion=3.0
 description=Busqueda Catastral
-version=1.3
+version=1.4
 author=David Orellano
 email=guardeivid@yahoo.com.ar
 
 about=Busqueda catastral, por partida inmobiliaria o nomenclatura catastral de la Provincia de Buenos Aires.
     A través de método en base de datos local (configurando parámetros de conexión a base de datos PostGis propia) o a servicios de mapas web de la Agencia de Recaudación de la Provincia de Buenos Aires (ARBA).
-
+    </br>
     Cadastral search, by real estate entry or cadastral nomenclature of the Province of Buenos Aires (Argentina).
     Through method local database (setting parameters database connection PostGis own data) or web services maps Revenue Agency of the Province of Buenos Aires (ARBA).
 
@@ -20,7 +20,9 @@ repository=https://github.com/guardeivid/catastrov3
 # Recommended items:
 
 # Uncomment the following line and add your changelog:
-changelog=1.3
+changelog=1.4
+	FIx zoom to extent in different SRC
+	1.3
     Fix bad request url
     1.2
     Fix parse partida
@@ -28,7 +30,7 @@ changelog=1.3
     GUI for settings searchs
 
 # Tags are comma separated with spaces allowed
-tags=search, cadastre, wfs, webservice, database, postgis, web, busqueda, catastral, partida inmobiliaria, nomenclatura, arba
+tags=search,cadastre,wfs,webservice,database,postgis,web,busqueda,catastral,partida inmobiliaria,nomenclatura,arba
 
 homepage=https://github.com/guardeivid/catastrov3
 category=Database
