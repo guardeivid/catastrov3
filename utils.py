@@ -179,8 +179,6 @@ class Utils(object):
                 print(str(e))
         return bbox
 
-        QgsProject
-
     def format_nomenclatura(self, nomencla):
         n = len(nomencla)
         res = ''
